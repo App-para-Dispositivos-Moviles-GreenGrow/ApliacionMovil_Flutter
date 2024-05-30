@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screens/community/postscreen.dart';
 import 'package:provider/provider.dart';
 import 'providers/article_provider.dart';
 import 'screens/articles_page.dart';
@@ -43,7 +44,7 @@ class _MainScreenState extends State<MainScreen> {
     HomePage(),
     CoursesPage(),
     ArticlesPage(),
-    CommunityPage(),
+    PostScreen(),
   ];
 
   void _onItemTapped(int index) {
