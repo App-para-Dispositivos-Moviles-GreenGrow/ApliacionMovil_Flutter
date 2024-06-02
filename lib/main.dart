@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screens/community/postscreen.dart';
 import 'package:provider/provider.dart';
 import 'providers/article_provider.dart';
 import 'screens/articles_page.dart';
@@ -8,6 +9,8 @@ import 'screens/community_page.dart';
 import 'screens/profile_page.dart';
 import 'screens/cart_page.dart';
 import 'widgets/bottom_nav_bar.dart';
+import 'screens/login.dart';
+import '/services/user_service.dart';  // Asegúrate de que la ruta sea correcta
 
 void main() {
   runApp(GreenGrowApp());
@@ -25,7 +28,10 @@ class GreenGrowApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: MainScreen(),
+        home: LoginScreen(), // Inicia con LoginScreen
+        routes: {
+          '/home': (context) => MainScreen(), // Define ruta para MainScreen
+        },
       ),
     );
   }
@@ -37,13 +43,18 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 2;  // Ajustamos el índice para que la vista inicial sea la de Artículos
+  int _selectedIndex = 0;  // Empezamos mostrando la HomePage
 
   static List<Widget> _pages = <Widget>[
     HomePage(),
     CoursesPage(),
     ArticlesPage(),
-    CommunityPage(),
+
+    PostScreen(),
+
+    ProfilePage(),  // Asegúrate de que estas páginas estén definidas
+    CartPage(),
+
   ];
 
   void _onItemTapped(int index) {
