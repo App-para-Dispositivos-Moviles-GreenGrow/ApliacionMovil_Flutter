@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/cart_model.dart';
 import 'package:flutter_application_1/screens/community/postscreen.dart';
+import 'package:flutter_application_1/screens/start_screen.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:provider/provider.dart';
 import 'providers/article_provider.dart';
 import 'screens/articles_page.dart';
@@ -8,9 +11,8 @@ import 'screens/courses_page.dart';
 import 'screens/community_page.dart';
 import 'screens/profile_page.dart';
 import 'screens/cart_page.dart';
-import 'widgets/bottom_nav_bar.dart';
 import 'screens/login.dart';
-import '/services/user_service.dart';  // Asegúrate de que la ruta sea correcta
+import '/services/user_service.dart'; // Asegúrate de que la ruta sea correcta
 
 void main() {
   runApp(GreenGrowApp());
@@ -22,14 +24,17 @@ class GreenGrowApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ArticleProvider()),
+        ChangeNotifierProvider(create: (context) => CartModel()), // Agrega CartModel aquí
       ],
       child: MaterialApp(
         title: 'GreenGrow App',
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: LoginScreen(), // Inicia con LoginScreen
+        initialRoute: '/', // Inicia con la pantalla de inicio
         routes: {
+          '/': (context) => ScreenStart(), // Define la ruta para la pantalla de inicio
+          '/login': (context) => LoginScreen(),
           '/home': (context) => MainScreen(), // Define ruta para MainScreen
         },
       ),
@@ -43,18 +48,15 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;  // Empezamos mostrando la HomePage
+  int _selectedIndex = 0; // Empezamos mostrando la HomePage
 
-  static List<Widget> _pages = <Widget>[
+  final _pages = [
     HomePage(),
     CoursesPage(),
     ArticlesPage(),
-
     PostScreen(),
-
-    ProfilePage(),  // Asegúrate de que estas páginas estén definidas
+    ProfilePage(),
     CartPage(),
-
   ];
 
   void _onItemTapped(int index) {
@@ -69,10 +71,47 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         title: Text('GreenGrow App'),
       ),
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
+      bottomNavigationBar: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+          child: GNav(
+            backgroundColor: Colors.white,
+            color: Colors.black,
+            activeColor: Colors.white,
+            tabBackgroundColor: Color(0xFF267144).withOpacity(0.5),
+            gap: 8,
+            padding: EdgeInsets.all(16),
+            tabs: const [
+              GButton(
+                icon: Icons.home,
+                text: 'Home',
+              ),
+              GButton(
+                icon: Icons.book,
+                text: 'Cursos',
+              ),
+              GButton(
+                icon: Icons.file_open,
+                text: 'Artículos',
+              ),
+              GButton(
+                icon: Icons.supervisor_account,
+                text: 'Comunidad',
+              ),
+            ],
+            selectedIndex: _selectedIndex,
+            onTabChange: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+          ),
+        ),
       ),
       drawer: Drawer(
         child: ListView(

@@ -6,7 +6,9 @@ import 'package:http/http.dart' as http;
 
 
 class PostService{
-  final String baseUrl = "http://10.0.2.2:8080/api/v1/post";
+//  final String baseUrl = "http://10.0.2.2:8080/api/v1/post";
+  final String baseUrl = "https://my-json-server.typicode.com/AlyneRegaladoMorales/apiMovilesApp/community";
+
 
   Future<List> getAllPosts() async {
     http.Response response = await http.get(Uri.parse(baseUrl));

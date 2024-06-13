@@ -70,7 +70,10 @@ class CourseItem extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(2.0),
               child: Image.network(
-                course.image,
+                course?.image  ?? '', errorBuilder: (
+                  BuildContext context, Object exception, StackTrace? stackTrace) {
+                    return const Icon(Icons.broken_image);
+              },
               ),
             ),
           ),
