@@ -28,8 +28,8 @@ final _formKey = GlobalKey<FormState>();
       await _postService.createPost(Post(id: 0, title: _title!, description: _description!, imageUrl: _imageUrl!, autor: _autor!));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Post added successfully!'),
-          backgroundColor: Colors.green,
+          content: Text('Post agregado correctamente'),
+          backgroundColor: Color(0xF006414),
         ),
       );
 
@@ -39,8 +39,8 @@ final _formKey = GlobalKey<FormState>();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to add post: $e'),
-          backgroundColor: Colors.red,
+          content: Text('Error al agregar post: $e'),
+          backgroundColor: Color(0xF950101),
         ),
       );
     }
