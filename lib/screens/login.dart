@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '/services/user_service.dart';
+import '../services/user_service.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -12,60 +12,156 @@ class _LoginScreenState extends State<LoginScreen> {
   final UserService _userService = UserService();
   bool _isLoading = false;
   bool _isPasswordVisible = false;
+  final String logoUrl = 'https://i.imgur.com/r286Yq3.png'; // URL del logo
+  final String backgroundUrl = 'https://i.imgur.com/I76CayH.png'; // URL del fondo
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('Login'),
+        //title: Text('Login'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      backgroundColor: Colors.green,  // Establece el color de fondo del Scaffold
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.network(
+            backgroundUrl,
+            fit: BoxFit.cover,
+          ),
+          Container(
+            color: Colors.black.withOpacity(0.6),
+          ),
+          Center(
+            child: Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              color: Colors.white,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 300),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.network(
+                        logoUrl,
+                        width: 70,
+                        height: 70,
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Bienvenido',
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      TextField(
+                        controller: _usernameController,
+                        decoration: InputDecoration(
+                          labelText: 'Username',
+                          labelStyle: TextStyle(color: Colors.black),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                        ),
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      SizedBox(height: 20),
+                      TextField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          labelStyle: TextStyle(color: Colors.black),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                              color: Colors.black,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: !_isPasswordVisible,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      SizedBox(height: 20),
+                      _isLoading
+                          ? CircularProgressIndicator()
+                          : ElevatedButton(
+                              onPressed: _login,
+                              child: Text(
+                                'Iniciar sesión',
+                                style: TextStyle(color: Colors.white), // Cambiar el texto a blanco
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green, // Color de fondo del botón
+                              ),
+                            ),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '¿No tienes una cuenta?',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              // Aquí puedes manejar la navegación a la pantalla de registro
+                            },
+                            child: Text(
+                              'Regístrate',
+                              style: TextStyle(color: Colors.green),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
                 ),
               ),
-              obscureText: !_isPasswordVisible,
             ),
-            SizedBox(height: 20),
-            _isLoading
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _login,
-                    child: Text('Login'),
-                  ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Future<void> _login() async {
+    final username = _usernameController.text;
+    final password = _passwordController.text;
+
+    // Validar que los campos no estén vacíos
+    if (username.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter both username and password')),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
-
-    final username = _usernameController.text;
-    final password = _passwordController.text;
 
     final isAuthenticated = await _userService.authenticate(username, password);
 

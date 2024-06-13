@@ -11,7 +11,6 @@ import 'screens/courses_page.dart';
 import 'screens/community_page.dart';
 import 'screens/profile_page.dart';
 import 'screens/cart_page.dart';
-import 'widgets/bottom_nav_bar.dart';
 import 'screens/login.dart';
 import '/services/user_service.dart'; // Asegúrate de que la ruta sea correcta
 
@@ -32,8 +31,10 @@ class GreenGrowApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: ScreenStart(), // Inicia con ScreenStart
+        initialRoute: '/', // Inicia con la pantalla de inicio
         routes: {
+          '/': (context) => ScreenStart(), // Define la ruta para la pantalla de inicio
+          '/login': (context) => LoginScreen(),
           '/home': (context) => MainScreen(), // Define ruta para MainScreen
         },
       ),

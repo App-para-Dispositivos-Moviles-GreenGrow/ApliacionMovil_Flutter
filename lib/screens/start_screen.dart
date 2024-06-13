@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/login.dart';
 
-
 class ScreenStart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -47,26 +46,21 @@ class ScreenStart extends StatelessWidget {
               SizedBox(
                 width: 300.0,
                 height: 60.0,
-
-                child:ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(                  
-                  
-                  backgroundColor: Color(0xFF224F34)
-                ),
-                child: Text(
-                  'Empezar',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/login');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF224F34),
+                  ),
+                  child: Text(
+                    'Empezar',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
               ),
               SizedBox(height: 40),
             ],
