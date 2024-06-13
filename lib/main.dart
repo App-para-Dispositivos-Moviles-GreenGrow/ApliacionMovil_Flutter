@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/community/postscreen.dart';
+import 'package:flutter_application_1/screens/start_screen.dart';
 import 'package:provider/provider.dart';
 import 'providers/article_provider.dart';
 import 'screens/articles_page.dart';
@@ -28,7 +29,8 @@ class GreenGrowApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: LoginScreen(), // Inicia con LoginScreen
+        //home: LoginScreen(), // Inicia con LoginScreen
+        home: ScreenStart(), // Inicia con MainScreen
         routes: {
           '/home': (context) => MainScreen(), // Define ruta para MainScreen
         },

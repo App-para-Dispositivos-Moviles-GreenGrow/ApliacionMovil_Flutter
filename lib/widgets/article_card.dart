@@ -18,7 +18,11 @@ class ArticleCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(article.imageUrl),
+            Image.network(article?.imageUrl  ?? '', errorBuilder: (
+              BuildContext context, Object exception, StackTrace? stackTrace) {
+                    return const Icon(Icons.broken_image);
+              },
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
