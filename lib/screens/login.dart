@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              // Aquí puedes manejar la navegación a la pantalla de registro
+                              Navigator.pushNamed(context, '/register'); // Redirigir a la pantalla de registro
                             },
                             child: Text(
                               'Regístrate',
