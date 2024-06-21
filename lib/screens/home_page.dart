@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Asegúrate de tener esta dependencia
 import '../widgets/course_card.dart';
 import '../widgets/image_carousel.dart';
 import '../services/courses_service.dart';
@@ -29,7 +30,22 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _courses = CourseService().searchCourses();
-    _profile = ProfileService().fetchProfile();
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? username = prefs.getString('username');
+    if (username != null) {
+      setState(() {
+        _profile = ProfileService().fetchProfile(username);
+      });
+    } else {
+      // Maneja el caso en que el nombre de usuario no esté disponible
+      setState(() {
+        _profile = Future.value(null);
+      });
+    }
   }
 
   void _navigateToProfile(BuildContext context) {
@@ -43,6 +59,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: FutureBuilder<Profile?>(
           future: _profile,
           builder: (context, snapshot) {
@@ -50,7 +67,7 @@ class _HomePageState extends State<HomePage> {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Loading...', style: TextStyle(fontSize: 12)),
+                  Text('Cargando...', style: TextStyle(fontSize: 12)),
                   IconButton(
                     icon: CircleAvatar(
                       backgroundImage: NetworkImage(defaultImageUrl),
@@ -63,7 +80,7 @@ class _HomePageState extends State<HomePage> {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Location: Lima, Peru', style: TextStyle(fontSize: 12)),
+                  Text('Ubicación: Lima, Peru', style: TextStyle(fontSize: 12)),
                   IconButton(
                     icon: CircleAvatar(
                       backgroundImage: NetworkImage(defaultImageUrl),
@@ -75,7 +92,7 @@ class _HomePageState extends State<HomePage> {
             } else {
               final profile = snapshot.data!;
               final profileImage = profile.imagePath != null
-                  ? FileImage(File(profile.imagePath!))
+                  ? NetworkImage(profile.imagePath!)
                   : NetworkImage(defaultImageUrl) as ImageProvider;
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -88,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       children: [
                         TextSpan(
-                          text: 'Location: ',
+                          text: 'Ubicación: ',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
@@ -144,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No courses available'));
+                    return Center(child: Text('No hay cursos disponibles'));
                   } else {
                     // Limitar el número de cursos a 4
                     final courses = snapshot.data!.take(4).toList();
