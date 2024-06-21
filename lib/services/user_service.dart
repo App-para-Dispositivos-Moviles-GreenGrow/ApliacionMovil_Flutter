@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class UserService {
-  final String _baseUrl = 'https://plain-marbled-muskox.glitch.me/users?';
+  final String _baseUrl = 'https://yancefranco.github.io/pruebajson0.1/db.json';
   final String _username = 'username=';
   final String _password = '&password=';
 
