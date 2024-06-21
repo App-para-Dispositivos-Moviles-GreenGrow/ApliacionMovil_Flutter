@@ -17,6 +17,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _imageUrlController = TextEditingController(); // Controlador para la URL de la imagen
   final RegisterUserService _userService = RegisterUserService();
   bool _isLoading = false;
   bool _isPasswordVisible = false;
@@ -133,6 +134,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           SizedBox(height: 20),
                           CustomTextField(controller: _cityController, label: 'Ciudad'),
                           SizedBox(height: 20),
+                          CustomTextField(controller: _imageUrlController, label: 'URL de la imagen (opcional)'), // Nuevo campo para la URL de la imagen
+                          SizedBox(height: 20),
                           _isLoading
                               ? CircularProgressIndicator()
                               : ElevatedButton(
@@ -169,6 +172,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final confirmPassword = _confirmPasswordController.text;
     final country = _countryController.text;
     final city = _cityController.text;
+    final imageUrl = _imageUrlController.text; // Obtener el valor de la URL de la imagen
 
     // Validar que los campos no estén vacíos
     if (dni.isEmpty || role.isEmpty || firstName.isEmpty || lastName.isEmpty || email.isEmpty ||
@@ -193,7 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       final isRegistered = await _userService.register(
-        dni, role, firstName, lastName, email, username, password, country, city,
+        dni, role, firstName, lastName, email, username, password, country, city, imageUrl,
       );
 
       if (isRegistered) {

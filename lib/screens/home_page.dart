@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../widgets/course_card.dart';
 import '../widgets/image_carousel.dart';
@@ -73,7 +74,9 @@ class _HomePageState extends State<HomePage> {
               );
             } else {
               final profile = snapshot.data!;
-              final profileImage = profile.image ?? defaultImageUrl;
+              final profileImage = profile.imagePath != null
+                  ? FileImage(File(profile.imagePath!))
+                  : NetworkImage(defaultImageUrl) as ImageProvider;
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -102,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   IconButton(
                     icon: CircleAvatar(
-                      backgroundImage: NetworkImage(profileImage),
+                      backgroundImage: profileImage,
                     ),
                     onPressed: () => _navigateToProfile(context),
                   ),
