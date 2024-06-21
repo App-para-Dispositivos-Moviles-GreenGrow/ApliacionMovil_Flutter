@@ -1,13 +1,15 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Asegúrate de tener esta dependencia
 import '../widgets/course_card.dart';
 import '../widgets/image_carousel.dart';
 import '../services/courses_service.dart';
 import '../services/profile_service.dart';
-import '../models/course.dart';
-import '../models/profile.dart';
+import '../models/profile.dart'; // Importa el modelo de perfil
+import '../models/course.dart'; // Importa el modelo de curso
 import 'profile_page.dart';  // Importa la página de perfil
+import 'articles_page.dart';  // Importa la página de Artículos
+import 'courses_page.dart';  // Importa la página de Cursos
+import 'community/postscreen.dart';  // Importa la página de Comunidad
 
 class HomePage extends StatefulWidget {
   @override
@@ -16,15 +18,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<String> imgList = [
-    'https://i.imgur.com/ru5fwlS.jpg',
-    'https://i.imgur.com/ru5fwlS.jpg',
-    'https://i.imgur.com/ru5fwlS.jpg',
-    'https://i.imgur.com/ru5fwlS.jpg',
+    'assets/images/image1.jpg',
+    'assets/images/image2.jpg',
+    'assets/images/image3.jpg',
+    'assets/images/image4.jpg',
   ];
 
   late Future<List<Course>> _courses;
   late Future<Profile?> _profile;
-  final String defaultImageUrl = 'https://i.imgur.com/sSeFlsE.png'; // URL de la imagen por defecto
+  final String defaultImageUrl = 'assets/images/image4.jpg'; // Ruta a la imagen por defecto
 
   @override
   void initState() {
@@ -55,6 +57,27 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _navigateToPage(BuildContext context, String title) {
+    Widget page;
+    switch (title) {
+      case 'Cursos':
+        page = CoursesPage();
+        break;
+      case 'Comunidad':
+        page = PostScreen();  // Cambia aquí a PostScreen
+        break;
+      case 'Artículos':
+        page = ArticlesPage();
+        break;
+      default:
+        return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => page),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                   Text('Cargando...', style: TextStyle(fontSize: 12)),
                   IconButton(
                     icon: CircleAvatar(
-                      backgroundImage: NetworkImage(defaultImageUrl),
+                      backgroundImage: AssetImage(defaultImageUrl),
                     ),
                     onPressed: () => _navigateToProfile(context),
                   ),
@@ -83,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                   Text('Ubicación: Lima, Peru', style: TextStyle(fontSize: 12)),
                   IconButton(
                     icon: CircleAvatar(
-                      backgroundImage: NetworkImage(defaultImageUrl),
+                      backgroundImage: AssetImage(defaultImageUrl),
                     ),
                     onPressed: () => _navigateToProfile(context),
                   ),
@@ -93,7 +116,7 @@ class _HomePageState extends State<HomePage> {
               final profile = snapshot.data!;
               final profileImage = profile.imagePath != null
                   ? NetworkImage(profile.imagePath!)
-                  : NetworkImage(defaultImageUrl) as ImageProvider;
+                  : AssetImage(defaultImageUrl) as ImageProvider;
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -148,9 +171,11 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 20),
               ImageCarousel(imgList: imgList),
               SizedBox(height: 20),
-              Text(
-                'Cursos Disponibles',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Center(
+                child: Text(
+                  'Cursos Más Destacados',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
               SizedBox(height: 10),
               FutureBuilder<List<Course>>(
@@ -188,6 +213,74 @@ class _HomePageState extends State<HomePage> {
                   }
                 },
               ),
+              SizedBox(height: 20),
+              Center(
+                child: Text(
+                  'Nuestros Servicios',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+              SizedBox(height: 10),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildServiceCard(
+                      context,
+                      'Cursos',
+                      'assets/images/image4.jpg',
+                    ),
+                    SizedBox(width: 10),
+                    _buildServiceCard(
+                      context,
+                      'Comunidad',
+                      'assets/images/image4.jpg',
+                    ),
+                    SizedBox(width: 10),
+                    _buildServiceCard(
+                      context,
+                      'Artículos',
+                      'assets/images/image4.jpg',
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServiceCard(BuildContext context, String title, String imageUrl) {
+    return GestureDetector(
+      onTap: () => _navigateToPage(context, title),
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Container(
+          width: 200,
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center, // Centrar horizontalmente
+            children: [
+              Image.asset(
+                imageUrl,
+                height: 100,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+              SizedBox(height: 10),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center, // Centrar el texto
+              ),
             ],
           ),
         ),
@@ -195,3 +288,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
