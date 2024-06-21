@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/cart_model.dart';
-import 'package:flutter_application_1/screens/community/postscreen.dart';
-import 'package:flutter_application_1/screens/start_screen.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:provider/provider.dart';
+import 'models/cart_model.dart';
 import 'providers/article_provider.dart';
 import 'screens/articles_page.dart';
 import 'screens/home_page.dart';
@@ -12,7 +10,9 @@ import 'screens/community_page.dart';
 import 'screens/profile_page.dart';
 import 'screens/cart_page.dart';
 import 'screens/login.dart';
-import '/services/user_service.dart'; // Asegúrate de que la ruta sea correcta
+import 'screens/register_screen.dart';
+import 'screens/start_screen.dart';
+import 'screens/community/postscreen.dart';
 
 void main() {
   runApp(GreenGrowApp());
@@ -24,7 +24,7 @@ class GreenGrowApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ArticleProvider()),
-        ChangeNotifierProvider(create: (context) => CartModel()), // Agrega CartModel aquí
+        ChangeNotifierProvider(create: (context) => CartModel()),
       ],
       child: MaterialApp(
         title: 'GreenGrow App',
@@ -35,6 +35,7 @@ class GreenGrowApp extends StatelessWidget {
         routes: {
           '/': (context) => ScreenStart(), // Define la ruta para la pantalla de inicio
           '/login': (context) => LoginScreen(),
+          '/register': (context) => RegisterScreen(),
           '/home': (context) => MainScreen(), // Define ruta para MainScreen
         },
       ),
@@ -89,19 +90,15 @@ class _MainScreenState extends State<MainScreen> {
             tabs: const [
               GButton(
                 icon: Icons.home,
-                text: 'Home',
               ),
               GButton(
                 icon: Icons.book,
-                text: 'Cursos',
               ),
               GButton(
                 icon: Icons.file_open,
-                text: 'Artículos',
               ),
               GButton(
                 icon: Icons.supervisor_account,
-                text: 'Comunidad',
               ),
             ],
             selectedIndex: _selectedIndex,
