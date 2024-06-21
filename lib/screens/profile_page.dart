@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/profile_service.dart';
 import '../models/profile.dart';
 
@@ -15,7 +16,23 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _profileFuture = _profileService.fetchProfile();
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? username = prefs.getString('username');  // Asegúrate de guardar el nombre de usuario al iniciar sesión
+    print('Username: $username');
+    if (username != null) {
+      setState(() {
+        _profileFuture = _profileService.fetchProfile(username);
+      });
+    } else {
+      // Maneja el caso en que el nombre de usuario no esté disponible
+      setState(() {
+        _profileFuture = Future.value(null);
+      });
+    }
   }
 
   Future<void> _updateImageUrl() async {
@@ -54,11 +71,14 @@ class _ProfilePageState extends State<ProfilePage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
+            print('Error: ${snapshot.error}');
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data == null) {
+            print('No data');
             return Center(child: Text('No se pudo cargar el perfil'));
           } else {
             final profile = snapshot.data!;
+            print('Profile loaded: ${profile.toJson()}');
             _imageUrlController.text = profile.imagePath ?? '';
             return Padding(
               padding: const EdgeInsets.all(16.0),

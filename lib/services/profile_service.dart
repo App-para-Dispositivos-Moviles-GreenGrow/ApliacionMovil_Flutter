@@ -6,9 +6,19 @@ import '../models/profile.dart';
 class ProfileService {
   final String baseUrl = "http://10.0.2.2:5000";  // Cambia esto a la URL de tu servicio Flask
 
-  Future<Profile?> fetchProfile() async {
+  Future<Profile?> fetchProfile(String username) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/profile?dni=12345678'));
+      final response = await http.post(
+        Uri.parse('$baseUrl/profile'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'username': username,
+        }),
+      );
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
       if (response.statusCode == HttpStatus.ok) {
         final jsonResponse = json.decode(response.body);
         return Profile.fromJson(jsonResponse);
@@ -37,4 +47,3 @@ class ProfileService {
     }
   }
 }
-
