@@ -18,7 +18,7 @@ class CourseService {
   }
 
   // Método POST para agregar un curso
-  Future<Course> addCourse(Course course) async {
+  Future<void> addCourse(Course course) async {
     final response = await http.post(
       Uri.parse('$baseUrl/courses'),
       headers: {
@@ -32,9 +32,7 @@ class CourseService {
       }),
     );
 
-    if (response.statusCode == HttpStatus.created || response.statusCode == HttpStatus.ok) {
-      return Course.fromJson(jsonDecode(response.body));
-    } else {
+    if (response.statusCode != HttpStatus.created) {
       throw Exception('Failed to add course');
     }
   }
