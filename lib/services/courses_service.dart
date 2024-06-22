@@ -29,6 +29,7 @@ class CourseService {
         'price': course.price,
         'description': course.description,
         'image': course.image,
+        'videoUrl': course.videoUrl,
       }),
     );
 
