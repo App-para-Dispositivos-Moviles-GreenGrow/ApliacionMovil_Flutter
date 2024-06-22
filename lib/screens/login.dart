@@ -13,23 +13,22 @@ class _LoginScreenState extends State<LoginScreen> {
   final UserService _userService = UserService();
   bool _isLoading = false;
   bool _isPasswordVisible = false;
-  final String logoUrl = 'https://i.imgur.com/r286Yq3.png'; // URL del logo
-  final String backgroundUrl = 'https://i.imgur.com/I76CayH.png'; // URL del fondo
+  final String logoPath = 'assets/images/logo.png'; // Ruta del logo
+  final String backgroundPath = 'assets/images/imagenF.jpg'; // Ruta del fondo
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        //title: Text('Login'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network(
-            backgroundUrl,
+          Image.asset(
+            backgroundPath,
             fit: BoxFit.cover,
           ),
           Container(
@@ -49,8 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Image.network(
-                        logoUrl,
+                      Image.asset(
+                        logoPath,
                         width: 70,
                         height: 70,
                       ),

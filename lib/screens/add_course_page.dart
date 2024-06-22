@@ -13,6 +13,7 @@ class AddCoursePage extends StatelessWidget {
     final TextEditingController priceController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
     final TextEditingController imageController = TextEditingController();
+    final TextEditingController videoUrlController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -39,6 +40,10 @@ class AddCoursePage extends StatelessWidget {
               controller: imageController,
               decoration: const InputDecoration(labelText: 'Image URL'),
             ),
+            TextField(
+              controller: videoUrlController,
+              decoration: const InputDecoration(labelText: 'Video URL'),
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
@@ -47,6 +52,7 @@ class AddCoursePage extends StatelessWidget {
                   price: int.parse(priceController.text),
                   description: descriptionController.text,
                   image: imageController.text,
+                  videoUrl: videoUrlController.text,
                 );
 
                 final CourseService courseService = CourseService();
