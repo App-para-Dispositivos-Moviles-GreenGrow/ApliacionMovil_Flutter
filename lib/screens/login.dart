@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Importar SharedPreferences
 import '../services/user_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -127,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              // Aquí puedes manejar la navegación a la pantalla de registro
+                              Navigator.pushNamed(context, '/register'); // Redirigir a la pantalla de registro
                             },
                             child: Text(
                               'Regístrate',
@@ -170,6 +171,8 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if (isAuthenticated) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('username', username); // Guardar el nombre de usuario
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Asegúrate de tener esta dependencia
 import '../widgets/course_card.dart';
 import '../widgets/image_carousel.dart';
 import '../services/courses_service.dart';
 import '../services/profile_service.dart';
-import '../models/course.dart';
-import '../models/profile.dart';
+import '../models/profile.dart'; // Importa el modelo de perfil
+import '../models/course.dart'; // Importa el modelo de curso
 import 'profile_page.dart';  // Importa la página de perfil
+import 'articles_page.dart';  // Importa la página de Artículos
+import 'courses_page.dart';  // Importa la página de Cursos
+import 'community/postscreen.dart';  // Importa la página de Comunidad
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,21 +18,36 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<String> imgList = [
-    'https://i.imgur.com/ru5fwlS.jpg',
-    'https://i.imgur.com/ru5fwlS.jpg',
-    'https://i.imgur.com/ru5fwlS.jpg',
-    'https://i.imgur.com/ru5fwlS.jpg',
+    'assets/images/image1.jpg',
+    'assets/images/image2.jpg',
+    'assets/images/image3.jpg',
+    'assets/images/image4.jpg',
   ];
 
   late Future<List<Course>> _courses;
   late Future<Profile?> _profile;
-  final String defaultImageUrl = 'https://i.imgur.com/sSeFlsE.png'; // URL de la imagen por defecto
+  final String defaultImageUrl = 'assets/images/image4.jpg'; // Ruta a la imagen por defecto
 
   @override
   void initState() {
     super.initState();
     _courses = CourseService().searchCourses();
-    _profile = ProfileService().fetchProfile();
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? username = prefs.getString('username');
+    if (username != null) {
+      setState(() {
+        _profile = ProfileService().fetchProfile(username);
+      });
+    } else {
+      // Maneja el caso en que el nombre de usuario no esté disponible
+      setState(() {
+        _profile = Future.value(null);
+      });
+    }
   }
 
   void _navigateToProfile(BuildContext context) {
@@ -38,10 +57,32 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _navigateToPage(BuildContext context, String title) {
+    Widget page;
+    switch (title) {
+      case 'Cursos':
+        page = CoursesPage();
+        break;
+      case 'Comunidad':
+        page = PostScreen();  // Cambia aquí a PostScreen
+        break;
+      case 'Artículos':
+        page = ArticlesPage();
+        break;
+      default:
+        return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => page),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: FutureBuilder<Profile?>(
           future: _profile,
           builder: (context, snapshot) {
@@ -49,10 +90,10 @@ class _HomePageState extends State<HomePage> {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Loading...', style: TextStyle(fontSize: 12)),
+                  Text('Cargando...', style: TextStyle(fontSize: 12)),
                   IconButton(
                     icon: CircleAvatar(
-                      backgroundImage: NetworkImage(defaultImageUrl),
+                      backgroundImage: AssetImage(defaultImageUrl),
                     ),
                     onPressed: () => _navigateToProfile(context),
                   ),
@@ -62,10 +103,10 @@ class _HomePageState extends State<HomePage> {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Location: Lima, Peru', style: TextStyle(fontSize: 12)),
+                  Text('Ubicación: Lima, Peru', style: TextStyle(fontSize: 12)),
                   IconButton(
                     icon: CircleAvatar(
-                      backgroundImage: NetworkImage(defaultImageUrl),
+                      backgroundImage: AssetImage(defaultImageUrl),
                     ),
                     onPressed: () => _navigateToProfile(context),
                   ),
@@ -73,7 +114,9 @@ class _HomePageState extends State<HomePage> {
               );
             } else {
               final profile = snapshot.data!;
-              final profileImage = profile.image ?? defaultImageUrl;
+              final profileImage = profile.imagePath != null
+                  ? NetworkImage(profile.imagePath!)
+                  : AssetImage(defaultImageUrl) as ImageProvider;
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -85,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       children: [
                         TextSpan(
-                          text: 'Location: ',
+                          text: 'Ubicación: ',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
@@ -102,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   IconButton(
                     icon: CircleAvatar(
-                      backgroundImage: NetworkImage(profileImage),
+                      backgroundImage: profileImage,
                     ),
                     onPressed: () => _navigateToProfile(context),
                   ),
@@ -128,9 +171,11 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 20),
               ImageCarousel(imgList: imgList),
               SizedBox(height: 20),
-              Text(
-                'Cursos Disponibles',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Center(
+                child: Text(
+                  'Cursos Más Destacados',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
               SizedBox(height: 10),
               FutureBuilder<List<Course>>(
@@ -141,7 +186,7 @@ class _HomePageState extends State<HomePage> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No courses available'));
+                    return Center(child: Text('No hay cursos disponibles'));
                   } else {
                     // Limitar el número de cursos a 4
                     final courses = snapshot.data!.take(4).toList();
@@ -168,6 +213,74 @@ class _HomePageState extends State<HomePage> {
                   }
                 },
               ),
+              SizedBox(height: 20),
+              Center(
+                child: Text(
+                  'Nuestros Servicios',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+              SizedBox(height: 10),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildServiceCard(
+                      context,
+                      'Cursos',
+                      'assets/images/image4.jpg',
+                    ),
+                    SizedBox(width: 10),
+                    _buildServiceCard(
+                      context,
+                      'Comunidad',
+                      'assets/images/image4.jpg',
+                    ),
+                    SizedBox(width: 10),
+                    _buildServiceCard(
+                      context,
+                      'Artículos',
+                      'assets/images/image4.jpg',
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServiceCard(BuildContext context, String title, String imageUrl) {
+    return GestureDetector(
+      onTap: () => _navigateToPage(context, title),
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Container(
+          width: 200,
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center, // Centrar horizontalmente
+            children: [
+              Image.asset(
+                imageUrl,
+                height: 100,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+              SizedBox(height: 10),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center, // Centrar el texto
+              ),
             ],
           ),
         ),
@@ -175,3 +288,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+

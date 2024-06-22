@@ -3,20 +3,31 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class UserService {
-  final String _baseUrl = 'https://yancefranco.github.io/pruebajson0.1/db.json';
-  final String _username = 'username=';
-  final String _password = '&password=';
+  final String _baseUrl = 'http://10.0.2.2:5000/login'; // URL del endpoint Flask
 
   Future<bool> authenticate(String username, String password) async {
-    final url = '$_baseUrl$_username$username$_password$password';
+    final url = _baseUrl;
 
-    http.Response response = await http.get(Uri.parse(url));
-    if (response.statusCode == HttpStatus.ok) {
-      final jsonResponse = response.body;
-      final users = json.decode(jsonResponse);
-      return users.isNotEmpty;
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+        body: jsonEncode({
+          'username': username,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == HttpStatus.ok) {
+        return true;
+      } else {
+        print('Error de autenticación: ${response.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
     }
     return false;
   }
 }
- 

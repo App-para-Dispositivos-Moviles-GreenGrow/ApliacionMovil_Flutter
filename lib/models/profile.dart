@@ -1,18 +1,48 @@
 class Profile {
-  final String city;
+  final String dni;
+  final String role;
+  final String firstName;
+  final String lastName;
+  final String email;
   final String country;
-  final String? image;
+  final String city;
+  final String? imagePath;  // Campo para el path de la imagen
 
-  Profile({required this.city, required this.country, this.image});
+  Profile({
+    required this.dni,
+    required this.role,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.country,
+    required this.city,
+    this.imagePath,
+  });
 
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
-      city: json['city'],
+      dni: json['dni'],
+      role: json['role'],
+      firstName: json['first_name'],
+      lastName: json['last_name'],
+      email: json['email'],
       country: json['country'],
-      image: json['image'],
+      city: json['city'],
+      imagePath: json['image_path'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'dni': dni,
+      'role': role,
+      'first_name': firstName,
+      'last_name': lastName,
+      'email': email,
+      'country': country,
+      'city': city,
+      'image_path': imagePath,
+    };
   }
 }
 
-
-//cambiar cuando se cree el api para gestionar el perfil con el incio de sesion
