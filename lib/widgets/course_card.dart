@@ -30,6 +30,9 @@ class CourseCard extends StatelessWidget {
               child: Image.network(
                 image,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.broken_image, size: 50, color: Colors.grey);
+                },
               ),
             ),
           ),
@@ -38,10 +41,12 @@ class CourseCard extends StatelessWidget {
             child: Text(
               name,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
               description,
               style: TextStyle(fontSize: 12),

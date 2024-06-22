@@ -4,7 +4,7 @@ import 'package:flutter_application_1/models/course.dart';
 import 'package:http/http.dart' as http;
 
 class CourseService {
-  final String baseUrl = "http://10.0.2.2:5000";
+  final String baseUrl = "https://backend-flask-3.onrender.com";
 
   // Método GET para obtener los cursos
   Future<List<Course>> searchCourses() async {

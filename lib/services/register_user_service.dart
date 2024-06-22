@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class RegisterUserService {
-  final String _baseUrl = 'http://10.0.2.2:5000';
+  final String _baseUrl = 'https://backend-flask-3.onrender.com';
 
   Future<bool> register(String dni, String role, String firstName, String lastName, String email, String username, String password, String country, String city, [String? imageUrl]) async {
     final Map<String, String> requestBody = {
