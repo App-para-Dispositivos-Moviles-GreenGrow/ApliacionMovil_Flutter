@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/course.dart';
+import 'package:flutter_application_1/screens/detailed_course.dart';
+import 'package:flutter_application_1/services/cart_service.dart';
 import 'package:flutter_application_1/services/courses_service.dart';
 import 'package:flutter_application_1/screens/add_course_page.dart';
+import 'package:flutter_application_1/session/user_session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CoursesPage extends StatefulWidget {
@@ -42,7 +45,7 @@ class _CoursesPageState extends State<CoursesPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Courses"),
+        title: const Text("Cursos"),
         actions: [
           FutureBuilder<String>(
             future: _getUsername(),
@@ -66,8 +69,10 @@ class _CoursesPageState extends State<CoursesPage> {
                   }
                   print("Rol del usuario recibido: ${roleSnapshot.data}");
                   if (roleSnapshot.data == "experto") {
-                    return IconButton(
-                      icon: const Icon(Icons.add),
+                    return TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 0, 89, 4),
+                      ),
                       onPressed: () async {
                         // Esperar el resultado de AddCoursePage
                         final result = await Navigator.push(
@@ -81,6 +86,10 @@ class _CoursesPageState extends State<CoursesPage> {
                           initialize();
                         }
                       },
+                      child: const Text(
+                        'Agregar curso',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     );
                   }
                   return Container(); // No mostrar el botón si el rol no es "experto"
@@ -96,78 +105,116 @@ class _CoursesPageState extends State<CoursesPage> {
 }
 
 class CoursesList extends StatelessWidget {
-  const CoursesList({super.key, required this.courses});
+  CoursesList({super.key, required this.courses});
 
   final List<Course> courses;
+  final CartService cartService = CartService();
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      shrinkWrap: true,
       itemCount: courses.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 8.0,
-        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 10.0,
+        crossAxisSpacing: 10.0,
+        childAspectRatio: 0.8,
       ),
       itemBuilder: (context, index) {
-        return CourseItem(course: courses[index]);
+        return CourseItem(course: courses[index], cartService: cartService,);
       },
     );
   }
 }
 
 class CourseItem extends StatelessWidget {
-  const CourseItem({super.key, required this.course});
+  const CourseItem({super.key, required this.course, required this.cartService});
   final Course course;
+  final CartService cartService;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Column(
+      elevation: 2,
+      child: InkWell(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => CourseDetailed(course: course)));
+        },
+        child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
               child: Image.network(
                 course.image,
-                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                  return const Icon(Icons.broken_image);
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.broken_image, size: 50, color: Colors.grey);
                 },
               ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  course.name,
-                  textAlign: TextAlign.start,
-                  maxLines: 1,
-                  style: const TextStyle(color: Color.fromARGB(255, 0, 113, 4)),
-                ),
-                Text(
-                  course.description,
-                  style: const TextStyle(color: Colors.black),
-                ),
-                Row(
+            child: Text(
+              course.name,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              course.description,
+              style: const TextStyle(fontSize: 12),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "${course.price}",
-                      style: const TextStyle(color: Colors.black),
+                      '\$${course.price.toString()}',
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     ),
-                    const Icon(
-                      Icons.add,
-                      color: Colors.green,
-                    )
-                  ],
-                )
-              ],
-            ),
-          )
+                    IconButton(onPressed: () {
+                        // Acción a realizar cuando se presiona el botón
+                        //cartService.addCourseToShoppintCart(UserSession.username, course.id!);
+                        showDialog(
+                          context: context, 
+                          builder: (context) => AlertDialog(
+                            title: const Text(
+                              'Está a punto de añadir este curso al carrito de compras',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  cartService.addCourseToShoppintCart(UserSession.username, course.id!);
+                                  Navigator.pop(context);
+                                }, 
+                                style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green)),
+                                child: const Center(
+                                  child: Text('Aceptar',
+                                  style: TextStyle(color: Colors.white),),
+                                ))
+                            ],
+                          ));
+                      }, 
+                      icon: const Icon(Icons.add, color: Colors.green,))
+                  ], 
+                ),
+          ),
         ],
+      ),
       ),
     );
   }
