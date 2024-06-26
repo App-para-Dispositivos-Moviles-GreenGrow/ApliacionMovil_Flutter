@@ -1,4 +1,5 @@
 class Course {
+  final int? id;
   final String name;
   final int price;
   final String description;
@@ -6,6 +7,7 @@ class Course {
   final String videoUrl;
 
   Course({
+    this.id,
     required this.name,
     required this.price,
     required this.description,
@@ -14,7 +16,8 @@ class Course {
   });
 
   Course.fromJson(Map<String, dynamic> map)
-      : name = map["name"],
+      : id = map["id"],
+        name = map["name"],
         price = map["price"],
         image = map["image"],
         description = map["description"],

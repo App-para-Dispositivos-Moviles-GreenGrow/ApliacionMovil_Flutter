@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screens/my_courses_page.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:provider/provider.dart';
 import 'models/cart_model.dart';
@@ -115,13 +116,14 @@ class _MainScreenState extends State<MainScreen> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              child: Text('GreenGrow Menu'),
               decoration: BoxDecoration(
                 color: Colors.green,
               ),
+              child: const Text('GreenGrow Menu', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
             ),
             ListTile(
-              title: Text('Profile'),
+              leading: const Icon(Icons.person),
+              title: Text('Perfil'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -130,7 +132,8 @@ class _MainScreenState extends State<MainScreen> {
               },
             ),
             ListTile(
-              title: Text('Cart'),
+              leading: const Icon(Icons.shopping_cart),
+              title: Text('Carro de compras'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -138,6 +141,16 @@ class _MainScreenState extends State<MainScreen> {
                 );
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.book),
+              title: Text('Mis cursos'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyCoursesPage()),
+                );
+              },
+            )
           ],
         ),
       ),

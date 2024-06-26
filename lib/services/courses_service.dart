@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 
 class CourseService {
   final String baseUrl = "https://backend-flask-3.onrender.com";
-
   // Método GET para obtener los cursos
   Future<List<Course>> searchCourses() async {
     final response = await http.get(Uri.parse('$baseUrl/courses'));
@@ -55,6 +54,17 @@ class CourseService {
     } else {
       print("Error obteniendo el rol del usuario: ${response.statusCode}");
       throw Exception('Failed to get user role');
+    }
+  }
+
+
+  Future<List<Course>> getBuyedCourses(String username) async {
+    final response = await http.get(Uri.parse('$baseUrl/users/$username/courses'));
+    if (response.statusCode == HttpStatus.ok) {
+      final jsonResponse = json.decode(response.body) as List;
+      return jsonResponse.map((map) => Course.fromJson(map)).toList();
+    } else {
+      throw Exception('Failed to load courses');
     }
   }
 }
