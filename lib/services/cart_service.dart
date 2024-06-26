@@ -4,7 +4,7 @@ import 'package:flutter_application_1/models/course.dart';
 import 'package:http/http.dart' as http;
 
 class CartService {
-  final String baseUrl = "http://10.0.2.2:5000";
+  final String baseUrl = "https://backend-flask-3.onrender.com";
 
   Future<void> addCourseToShoppintCart(String username, int courseId) async {
     final response = await http.post(
