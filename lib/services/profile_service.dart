@@ -4,8 +4,7 @@ import 'package:http/http.dart' as http;
 import '../models/profile.dart';
 
 class ProfileService {
-  final String baseUrl = "http://10.0.2.2:5000";  // Cambia esto a la URL de tu servicio Flask
-
+  final String baseUrl = "https://backend-flask-3.onrender.com";  // Cambia esto a la URL de tu servicio Flask
   Future<Profile?> fetchProfile(String username) async {
     try {
       final response = await http.post(

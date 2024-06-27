@@ -36,8 +36,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network(
-            'https://i.imgur.com/I76CayH.png', // URL del fondo
+          Image.asset(
+            'assets/images/imagenF.jpg', // Cambia esto al nombre de tu imagen
             fit: BoxFit.cover,
           ),
           Container(

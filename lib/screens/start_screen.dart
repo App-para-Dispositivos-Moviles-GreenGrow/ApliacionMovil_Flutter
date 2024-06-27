@@ -14,8 +14,8 @@ class ScreenStart extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network(
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5RbnN1T1PFGAwDw4mLiwiD6pDWwkbQ7J-3Q&s',
+          Image.asset(
+            'assets/images/imagenF.jpg', // Cambia esto al nombre de tu imagen
             fit: BoxFit.cover,
           ),
           Container(

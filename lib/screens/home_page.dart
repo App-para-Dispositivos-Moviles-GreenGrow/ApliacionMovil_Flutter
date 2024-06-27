@@ -18,15 +18,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<String> imgList = [
-    'assets/images/image1.jpg',
-    'assets/images/image2.jpg',
-    'assets/images/image3.jpg',
-    'assets/images/image4.jpg',
+    'assets/images/imagen1.png',
+    'assets/images/imagen2.png',
+    'assets/images/imagen3.png',
+    'assets/images/imagen4.png',
   ];
 
   late Future<List<Course>> _courses;
   late Future<Profile?> _profile;
-  final String defaultImageUrl = 'assets/images/image4.jpg'; // Ruta a la imagen por defecto
+  final String defaultImageUrl = 'assets/images/imagenR.png'; // Ruta a la imagen por defecto
 
   @override
   void initState() {
@@ -190,25 +190,28 @@ class _HomePageState extends State<HomePage> {
                   } else {
                     // Limitar el número de cursos a 4
                     final courses = snapshot.data!.take(4).toList();
-                    return GridView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10.0,
-                        mainAxisSpacing: 10.0,
-                        childAspectRatio: 0.8, // Ajustar el aspect ratio
+                    return Container(
+                      height: MediaQuery.of(context).size.height * 0.6, // Ajusta la altura según sea necesario
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10.0,
+                          mainAxisSpacing: 10.0,
+                          childAspectRatio: 0.8, // Ajustar el aspect ratio
+                        ),
+                        itemCount: courses.length,
+                        itemBuilder: (context, index) {
+                          final course = courses[index];
+                          return CourseCard(
+                            name: course.name,
+                            price: course.price,
+                            description: course.description,
+                            image: course.image,
+                          );
+                        },
                       ),
-                      itemCount: courses.length,
-                      itemBuilder: (context, index) {
-                        final course = courses[index];
-                        return CourseCard(
-                          name: course.name,
-                          price: course.price,
-                          description: course.description,
-                          image: course.image,
-                        );
-                      },
                     );
                   }
                 },
@@ -228,19 +231,19 @@ class _HomePageState extends State<HomePage> {
                     _buildServiceCard(
                       context,
                       'Cursos',
-                      'assets/images/image4.jpg',
+                      'assets/images/cursos.png',
                     ),
                     SizedBox(width: 10),
                     _buildServiceCard(
                       context,
                       'Comunidad',
-                      'assets/images/image4.jpg',
+                      'assets/images/comunidad.png',
                     ),
                     SizedBox(width: 10),
                     _buildServiceCard(
                       context,
                       'Artículos',
-                      'assets/images/image4.jpg',
+                      'assets/images/articulos.png',
                     ),
                   ],
                 ),
@@ -288,4 +291,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
