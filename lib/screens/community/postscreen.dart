@@ -52,6 +52,7 @@ class _PostListState extends State<PostList> {
 
   @override
   Widget build(BuildContext context) {
+    _cargaPosts();
     return Container(
       color: Color(0xFFF9F9F9),
       child: Column(
